@@ -1,538 +1,538 @@
-﻿
-create Database Bd_Foto_Correa
+CREATE DATABASE DBFOTO_CORREA
 
 
-USE Bd_Foto_Correa
+USE DBFOTO_CORREA
 
 GO
 
+/****************** CREACIÓN DE TABLAS ******************/
 
-create table ROL(
-IdRol int primary key identity,
-Descripcion varchar(50),
-FechaRegistro datetime default getdate()
-)
+CREATE TABLE ROL (
+    IdRol INT PRIMARY KEY IDENTITY,
+    Descripcion VARCHAR(50),
+    FechaRegistro DATETIME DEFAULT GETDATE()
+);
 
-go
+GO
 
-create table PERMISO(
-IdPermiso int primary key identity,
-IdRol int references ROL(IdRol),
-NombreMenu varchar(100),
-FechaRegistro datetime default getdate()
-)
+CREATE TABLE PERMISO (
+    IdPermiso INT PRIMARY KEY IDENTITY,
+    IdRol INT REFERENCES ROL(IdRol),
+    NombreMenu VARCHAR(100),
+    FechaRegistro DATETIME DEFAULT GETDATE()
+);
 
-go
+GO
 
-create table USUARIO(
-IdUsuario int primary key identity,
-Documento varchar(50),
-NombreCompleto varchar(50),
-Correo varchar(50),
-Clave varchar(50),
-IdRol int references ROL(IdRol),
-Estado bit,
-FechaRegistro datetime default getdate()
-)
+CREATE TABLE USUARIO (
+    IdUsuario INT PRIMARY KEY IDENTITY,
+    Documento VARCHAR(50),
+    NombreCompleto VARCHAR(50),
+    Correo VARCHAR(50),
+    Clave VARCHAR(50),
+    IdRol INT REFERENCES ROL(IdRol),
+    Estado BIT,
+    FechaRegistro DATETIME DEFAULT GETDATE()
+);
 
-go
+GO
 
-create table CLIENTE(
-IdCliente int primary key identity,
-Documento varchar(50),
-NombreCompleto varchar(50),
-Correo varchar(50),
-Telefono varchar(50),
-Estado bit,
-FechaRegistro datetime default getdate()
-)
+CREATE TABLE CLIENTE (
+    IdCliente INT PRIMARY KEY IDENTITY,
+    Documento VARCHAR(50),
+    NombreCompleto VARCHAR(50),
+    Correo VARCHAR(50),
+    Telefono VARCHAR(50),
+    Estado BIT,
+    FechaRegistro DATETIME DEFAULT GETDATE()
+);
 
-go
+GO
 
-create table CATEGORIA(
-IdCategoria int primary key identity,
-Descripcion varchar(100),
-Estado bit,
-FechaRegistro datetime default getdate()
-)
+CREATE TABLE CATEGORIA (
+    IdCategoria INT PRIMARY KEY IDENTITY,
+    Descripcion VARCHAR(100),
+    Estado BIT,
+    FechaRegistro DATETIME DEFAULT GETDATE()
+);
 
-go
+GO
 
-create table PRODUCTO(
-IdProducto int primary key identity,
-Codigo varchar(50),
-Descripcion varchar(50),
-IdCategoria int references CATEGORIA(IdCategoria),
-PrecioVenta decimal(10,2) default 0,
-Estado bit,
-FechaRegistro datetime default getdate()
-)
-go
+CREATE TABLE PRODUCTO (
+    IdProducto INT PRIMARY KEY IDENTITY,
+    Codigo VARCHAR(50),
+    Descripcion VARCHAR(50),
+    IdCategoria INT REFERENCES CATEGORIA(IdCategoria),
+    PrecioVenta DECIMAL(10,2) DEFAULT 0,
+    Estado BIT,
+    FechaRegistro DATETIME DEFAULT GETDATE()
+);
 
-create table PRODUCTO_DETAL(
-IdProducto int primary key identity,
-Descripcion varchar(50),
-PrecioVenta decimal(10,2) default 0,
-Estado bit
-)
+GO
 
-go
+CREATE TABLE PRODUCTO_DETAL (
+    IdProducto INT PRIMARY KEY IDENTITY,
+    Descripcion VARCHAR(50),
+    PrecioVenta DECIMAL(10,2) DEFAULT 0,
+    Estado BIT
+);
 
-create table VENTA(
-IdVenta int primary key identity,
-IdProducto int references PRODUCTO(IdProducto),
-DatosCliente varchar(50),
-Telefono varchar(50),
-Especificaciones varchar(50),
-ValorVenta decimal(10,2),
-ValorPagado decimal(10,2),
-ValorResta decimal(10,2),
-SubTotal decimal(10,2),
-Cantidad int,
-EstadoDeuda varchar (50),
-NumeroConsecutivo int,
-FechaRegistro datetime default getdate()
-)
+GO
 
-go
+CREATE TABLE VENTA (
+    IdVenta INT PRIMARY KEY IDENTITY,
+    IdProducto INT REFERENCES PRODUCTO(IdProducto),
+    DatosCliente VARCHAR(50),
+    Telefono VARCHAR(50),
+    Especificaciones VARCHAR(50),
+    ValorVenta DECIMAL(10,2),
+    ValorPagado DECIMAL(10,2),
+    ValorResta DECIMAL(10,2),
+    SubTotal DECIMAL(10,2),
+    Cantidad INT,
+    EstadoDeuda VARCHAR(50),
+    NumeroConsecutivo INT,
+    FechaRegistro DATETIME DEFAULT GETDATE()
+);
 
-create table Venta_Detal(
-IdVentaDetal int primary key identity,
-IdProducto int references PRODUCTO_DETAL(IdProducto),
-NumeroConsecutivo int,
-Producto varchar(100),
-Cantidad int,
-SubTotal decimal(10,2),
-PrecioVenta decimal(10,2) default 0,
-FechaRegistro datetime default getdate()
-)
+GO
 
-go
+CREATE TABLE VENTA_DETAL (
+    IdVentaDetal INT PRIMARY KEY IDENTITY,
+    IdProducto INT REFERENCES PRODUCTO_DETAL(IdProducto),
+    NumeroConsecutivo INT,
+    Producto VARCHAR(100),
+    Cantidad INT,
+    SubTotal DECIMAL(10,2),
+    PrecioVenta DECIMAL(10,2) DEFAULT 0,
+    FechaRegistro DATETIME DEFAULT GETDATE()
+);
 
-create table DETALLE_VENTA(
-IdDetalleVenta int primary key identity,
-IdVenta int references VENTA(IdVenta),
-IdProducto int references PRODUCTO(IdProducto),
-Telefono varchar(50),
-Especificaciones varchar(50),
-Cantidad int,
-ValorVenta decimal(10,2),
-ValorPagado decimal(10,2),
-ValorResta decimal(10,2),
-SubTotal decimal(10,2),
-FechaRegistro datetime default getdate()
-)
+GO
 
-go
+CREATE TABLE DETALLE_VENTA (
+    IdDetalleVenta INT PRIMARY KEY IDENTITY,
+    IdVenta INT REFERENCES VENTA(IdVenta),
+    IdProducto INT REFERENCES PRODUCTO(IdProducto),
+    Telefono VARCHAR(50),
+    Especificaciones VARCHAR(50),
+    Cantidad INT,
+    ValorVenta DECIMAL(10,2),
+    ValorPagado DECIMAL(10,2),
+    ValorResta DECIMAL(10,2),
+    SubTotal DECIMAL(10,2),
+    FechaRegistro DATETIME DEFAULT GETDATE()
+);
 
-create table Detalle_VentaDetal(
-IdDetVentaDetal int primary key identity,
-Cantidad int,
-SubTotal decimal(10,2),
-IdProducto int references PRODUCTO_DETAL(IdProducto),
-PrecioVenta decimal(10,2),
-FechaRegistro datetime default getdate()
-)
+GO
 
-go
+CREATE TABLE DETALLE_VENTADETAL (
+    IdDetVentaDetal INT PRIMARY KEY IDENTITY,
+    Cantidad INT,
+    SubTotal DECIMAL(10,2),
+    IdProducto INT REFERENCES PRODUCTO_DETAL(IdProducto),
+    PrecioVenta DECIMAL(10,2),
+    FechaRegistro DATETIME DEFAULT GETDATE()
+);
 
-create table Evento(
-IdEvento int primary key,
-DatosCliente varchar(60),
-Telefono varchar(60),
-Direccion varchar(60),
-DescripcionEvento varchar (100),
-ValorVenta decimal(10,2),
-ValorPagado decimal(10,2),
-ValorResta decimal(10),
-Estado bit
-)
+GO
 
-go
+CREATE TABLE EVENTO (
+    IdEvento INT PRIMARY KEY IDENTITY,
+    DatosCliente VARCHAR(60),
+    Telefono VARCHAR(60),
+    Direccion VARCHAR(60),
+    DescripcionEvento VARCHAR(100),
+    ValorVenta DECIMAL(10,2),
+    ValorPagado DECIMAL(10,2),
+    ValorResta DECIMAL(10,2),
+    Estado BIT
+);
+GO
 
-
-/*************************** CREACION DE PROCEDIMIENTOS ALMACENADOS ***************************/
+/*************************** CREACIÓN DE PROCEDIMIENTOS ALMACENADOS ***************************/
 /*--------------------------------------------------------------------------------------------*/
 
-go
-
-
-create PROC SP_REGISTRARUSUARIO(
-@Documento varchar(50),
-@NombreCompleto varchar(100),
-@Correo varchar(100),
-@Clave varchar(100),
-@IdRol int,
-@Estado bit,
-@IdUsuarioResultado int output,
-@Mensaje varchar(500) output
+CREATE PROC SP_RegistrarUsuario (
+    @Documento VARCHAR(50),
+    @NombreCompleto VARCHAR(100),
+    @Correo VARCHAR(100),
+    @Clave VARCHAR(100),
+    @IdRol INT,
+    @Estado BIT,
+    @IdUsuarioResultado INT OUTPUT,
+    @Mensaje VARCHAR(500) OUTPUT
 )
-as
-begin
-	set @IdUsuarioResultado = 0
-	set @Mensaje = ''
+AS
+BEGIN
+    SET @IdUsuarioResultado = 0
+    SET @Mensaje = ''
 
+    IF NOT EXISTS (SELECT * FROM USUARIO WHERE Documento = @Documento)
+    BEGIN
+        INSERT INTO USUARIO (Documento, NombreCompleto, Correo, Clave, IdRol, Estado) VALUES
+        (@Documento, @NombreCompleto, @Correo, @Clave, @IdRol, @Estado)
 
-	if not exists(select * from USUARIO where Documento = @Documento)
-	begin
-		insert into usuario(Documento,NombreCompleto,Correo,Clave,IdRol,Estado) values
-		(@Documento,@NombreCompleto,@Correo,@Clave,@IdRol,@Estado)
+        SET @IdUsuarioResultado = SCOPE_IDENTITY()
+        SET @Mensaje = 'Usuario registrado con éxito.'
+    END
+    ELSE
+    BEGIN
+        SET @Mensaje = 'No se puede repetir el documento para más de un usuario.'
+    END
+END
 
-		set @IdUsuarioResultado = SCOPE_IDENTITY()
-		
-	end
-	else
-		set @Mensaje = 'No se puede repetir el documento para más de un usuario'
+GO
 
-
-end
-
-go
-
-create PROC SP_EDITARUSUARIO(
-@IdUsuario int,
-@Documento varchar(50),
-@NombreCompleto varchar(100),
-@Correo varchar(100),
-@Clave varchar(100),
-@IdRol int,
-@Estado bit,
-@Respuesta bit output,
-@Mensaje varchar(500) output
+CREATE PROC SP_EditarUsuario (
+    @IdUsuario INT,
+    @Documento VARCHAR(50),
+    @NombreCompleto VARCHAR(100),
+    @Correo VARCHAR(100),
+    @Clave VARCHAR(100),
+    @IdRol INT,
+    @Estado BIT,
+    @Respuesta BIT OUTPUT,
+    @Mensaje VARCHAR(500) OUTPUT
 )
-as
-begin
-	set @Respuesta = 0
-	set @Mensaje = ''
+AS
+BEGIN
+    SET @Respuesta = 0
+    SET @Mensaje = ''
 
+    IF NOT EXISTS (SELECT * FROM USUARIO WHERE Documento = @Documento AND IdUsuario != @IdUsuario)
+    BEGIN
+        UPDATE USUARIO SET
+            Documento = @Documento,
+            NombreCompleto = @NombreCompleto,
+            Correo = @Correo,
+            Clave = @Clave,
+            IdRol = @IdRol,
+            Estado = @Estado
+        WHERE IdUsuario = @IdUsuario
 
-	if not exists(select * from USUARIO where Documento = @Documento and idusuario != @IdUsuario)
-	begin
-		update  usuario set
-		Documento = @Documento,
-		NombreCompleto = @NombreCompleto,
-		Correo = @Correo,
-		Clave = @Clave,
-		IdRol = @IdRol,
-		Estado = @Estado
-		where IdUsuario = @IdUsuario
+        SET @Respuesta = 1
+        SET @Mensaje = 'Usuario editado con éxito.'
+    END
+    ELSE
+    BEGIN
+        SET @Mensaje = 'No se puede repetir el documento para más de un usuario.'
+    END
+END
 
-		set @Respuesta = 1
-		
-	end
-	else
-		set @Mensaje = 'No se puede repetir el documento para más de un usuario'
+GO
 
-
-end
-go
-
-create PROC SP_ELIMINARUSUARIO(
-@IdUsuario int,
-@Respuesta bit output,
-@Mensaje varchar(500) output
+CREATE PROC SP_EliminarUsuario (
+    @IdUsuario INT,
+    @Respuesta BIT OUTPUT,
+    @Mensaje VARCHAR(500) OUTPUT
 )
-as
-begin
-	set @Respuesta = 0
-	set @Mensaje = ''
-	declare @pasoreglas bit = 1
+AS
+BEGIN
+    SET @Respuesta = 0
+    SET @Mensaje = ''
 
-	IF EXISTS (SELECT * FROM COMPRA C 
-	INNER JOIN USUARIO U ON U.IdUsuario = C.IdUsuario
-	WHERE U.IDUSUARIO = @IdUsuario
-	)
-	BEGIN
-		set @pasoreglas = 0
-		set @Respuesta = 0
-		set @Mensaje = @Mensaje + 'No se puede eliminar porque el usuario se encuentra relacionado a una COMPRA\n' 
-	END
+    -- Verificar si el usuario existe antes de intentar eliminarlo
+    IF EXISTS (SELECT 1 FROM USUARIO WHERE IdUsuario = @IdUsuario)
+    BEGIN
+        DELETE FROM USUARIO WHERE IdUsuario = @IdUsuario
+        SET @Respuesta = 1
+        SET @Mensaje = 'Usuario eliminado con éxito.'
+    END
+    ELSE
+    BEGIN
+        SET @Mensaje = 'Usuario no encontrado.'
+    END
+END
 
-	IF EXISTS (SELECT * FROM VENTA V
-	INNER JOIN USUARIO U ON U.IdUsuario = V.IdUsuario
-	WHERE U.IDUSUARIO = @IdUsuario
-	)
-	BEGIN
-		set @pasoreglas = 0
-		set @Respuesta = 0
-		set @Mensaje = @Mensaje + 'No se puede eliminar porque el usuario se encuentra relacionado a una VENTA\n' 
-	END
-
-	if(@pasoreglas = 1)
-	begin
-		delete from USUARIO where IdUsuario = @IdUsuario
-		set @Respuesta = 1 
-	end
-
-end
-
-go
+GO
 
 /* ---------- PROCEDIMIENTOS PARA CATEGORIA -----------------*/
 
-
-create PROC SP_RegistrarCategoria(
-@Descripcion varchar(50),
-@Estado bit,
-@Resultado int output,
-@Mensaje varchar(500) output
-)as
-begin
-	SET @Resultado = 0
-	IF NOT EXISTS (SELECT * FROM CATEGORIA WHERE Descripcion = @Descripcion)
-	begin
-		insert into CATEGORIA(Descripcion,Estado) values (@Descripcion,@Estado)
-		set @Resultado = SCOPE_IDENTITY()
-	end
-	ELSE
-		set @Mensaje = 'No se puede repetir la descripcion de una categoria'
-	
-end
-
-
-go
-
-Create procedure sp_EditarCategoria(
-@IdCategoria int,
-@Descripcion varchar(50),
-@Estado bit,
-@Resultado bit output,
-@Mensaje varchar(500) output
+CREATE PROC SP_RegistrarCategoria (
+    @Descripcion VARCHAR(50),
+    @Estado BIT,
+    @Resultado INT OUTPUT,
+    @Mensaje VARCHAR(500) OUTPUT
 )
-as
-begin
-	SET @Resultado = 1
-	IF NOT EXISTS (SELECT * FROM CATEGORIA WHERE Descripcion =@Descripcion and IdCategoria != @IdCategoria)
-		update CATEGORIA set
-		Descripcion = @Descripcion,
-		Estado = @Estado
-		where IdCategoria = @IdCategoria
-	ELSE
-	begin
-		SET @Resultado = 0
-		set @Mensaje = 'No se puede repetir la descripcion de una categoria'
-	end
+AS
+BEGIN
+    SET @Resultado = 0
 
-end
+    IF NOT EXISTS (SELECT * FROM CATEGORIA WHERE Descripcion = @Descripcion)
+    BEGIN
+        INSERT INTO CATEGORIA (Descripcion, Estado) VALUES (@Descripcion, @Estado)
+        SET @Resultado = SCOPE_IDENTITY()
+        SET @Mensaje = 'Categoría registrada con éxito.'
+    END
+    ELSE
+    BEGIN
+        SET @Mensaje = 'No se puede repetir la descripción de una categoría.'
+    END
+END
 
-go
+GO
 
-create procedure sp_EliminarCategoria(
-@IdCategoria int,
-@Resultado bit output,
-@Mensaje varchar(500) output
+CREATE PROC SP_EditarCategoria (
+    @IdCategoria INT,
+    @Descripcion VARCHAR(50),
+    @Estado BIT,
+    @Resultado BIT OUTPUT,
+    @Mensaje VARCHAR(500) OUTPUT
 )
-as
-begin
-	SET @Resultado = 1
-	IF NOT EXISTS (
-	 select *  from CATEGORIA c
-	 inner join PRODUCTO p on p.IdCategoria = c.IdCategoria
-	 where c.IdCategoria = @IdCategoria
-	)
-	begin
-	 delete top(1) from CATEGORIA where IdCategoria = @IdCategoria
-	end
-	ELSE
-	begin
-		SET @Resultado = 0
-		set @Mensaje = 'La categoria se encuentara relacionada a un producto'
-	end
+AS
+BEGIN
+    SET @Resultado = 1
 
-end
+    IF NOT EXISTS (SELECT * FROM CATEGORIA WHERE Descripcion = @Descripcion AND IdCategoria != @IdCategoria)
+    BEGIN
+        UPDATE CATEGORIA SET
+            Descripcion = @Descripcion,
+            Estado = @Estado
+        WHERE IdCategoria = @IdCategoria
+
+        SET @Mensaje = 'Categoría editada con éxito.'
+    END
+    ELSE
+    BEGIN
+        SET @Resultado = 0
+        SET @Mensaje = 'No se puede repetir la descripción de una categoría.'
+    END
+END
+
+GO
+
+CREATE PROC SP_EliminarCategoria (
+    @IdCategoria INT,
+    @Resultado BIT OUTPUT,
+    @Mensaje VARCHAR(500) OUTPUT
+)
+AS
+BEGIN
+    SET @Resultado = 1
+
+    IF NOT EXISTS (
+        SELECT * FROM CATEGORIA c
+        INNER JOIN PRODUCTO p ON p.IdCategoria = c.IdCategoria
+        WHERE c.IdCategoria = @IdCategoria
+    )
+    BEGIN
+        DELETE FROM CATEGORIA WHERE IdCategoria = @IdCategoria
+        SET @Mensaje = 'Categoría eliminada con éxito.'
+    END
+    ELSE
+    BEGIN
+        SET @Resultado = 0
+        SET @Mensaje = 'La categoría se encuentra relacionada a un producto.'
+    END
+END
 
 GO
 
 /* ---------- PROCEDIMIENTOS PARA PRODUCTO -----------------*/
 
-create PROC sp_RegistrarProducto(
-@IdCategoria int,
-@Codigo varchar(20),
-@Descripcion varchar(30),
-@PrecioVenta decimal(10,2),
-@Estado bit,
-@Resultado int output,
-@Mensaje varchar(500) output
-)as
-begin
-	SET @Resultado = 0
-	IF NOT EXISTS (SELECT * FROM producto WHERE Codigo = @Codigo)
-	begin
-		insert into producto(IdCategoria,Codigo,Descripcion,PrecioVenta,Estado) 
-		values (@IdCategoria,@Codigo,@Descripcion,@PrecioVenta,@Estado)
-		set @Resultado = SCOPE_IDENTITY()
-	end
-	ELSE
-	 SET @Mensaje = 'Ya existe un producto con el mismo codigo' 
-	
-end
+CREATE PROC SP_RegistrarProducto (
+    @IdCategoria INT,
+    @Codigo VARCHAR(20),
+    @Descripcion VARCHAR(30),
+    @PrecioVenta DECIMAL(10,2),
+    @Estado BIT,
+    @Resultado INT OUTPUT,
+    @Mensaje VARCHAR(500) OUTPUT
+)
+AS
+BEGIN
+    SET @Resultado = 0
+
+    IF NOT EXISTS (SELECT * FROM PRODUCTO WHERE Codigo = @Codigo)
+    BEGIN
+        INSERT INTO PRODUCTO (IdCategoria, Codigo, Descripcion, PrecioVenta, Estado)
+        VALUES (@IdCategoria, @Codigo, @Descripcion, @PrecioVenta, @Estado)
+
+        SET @Resultado = SCOPE_IDENTITY()
+        SET @Mensaje = 'Producto registrado con éxito.'
+    END
+    ELSE
+    BEGIN
+        SET @Mensaje = 'Ya existe un producto con el mismo código.'
+    END
+END
 
 GO
 
-create procedure sp_ModificarProducto(
-@IdProducto int,
-@Codigo varchar(20),
-@Descripcion varchar(30),
-@IdCategoria int,
-@Estado bit,
-@Resultado bit output,
-@Mensaje varchar(500) output
+CREATE PROC SP_ModificarProducto (
+    @IdProducto INT,
+    @Codigo VARCHAR(20),
+    @Descripcion VARCHAR(30),
+    @IdCategoria INT,
+    @Estado BIT,
+    @Resultado BIT OUTPUT,
+    @Mensaje VARCHAR(500) OUTPUT
 )
-as
-begin
-	SET @Resultado = 1
-	IF NOT EXISTS (SELECT * FROM PRODUCTO WHERE Codigo = @Codigo and IdProducto != @IdProducto)
-		
-		update PRODUCTO set
-		Codigo = @Codigo,
-		Descripcion = @Descripcion,
-		IdCategoria = @IdCategoria,
-		Estado = @Estado
-		where IdProducto = @IdProducto
-	ELSE
-	begin
-		SET @Resultado = 0
-		SET @Mensaje = 'Ya existe un producto con el mismo codigo' 
-	end
-end
+AS
+BEGIN
+    SET @Resultado = 1
 
-go
+    IF NOT EXISTS (SELECT * FROM PRODUCTO WHERE Codigo = @Codigo AND IdProducto != @IdProducto)
+    BEGIN
+        UPDATE PRODUCTO SET
+            Codigo = @Codigo,
+            Descripcion = @Descripcion,
+            IdCategoria = @IdCategoria,
+            Estado = @Estado
+        WHERE IdProducto = @IdProducto
 
+        SET @Mensaje = 'Producto modificado con éxito.'
+    END
+    ELSE
+    BEGIN
+        SET @Resultado = 0
+        SET @Mensaje = 'Ya existe un producto con el mismo código.'
+    END
+END
 
-create PROC SP_EliminarProducto(
-@IdProducto int,
-@Respuesta bit output,
-@Mensaje varchar(500) output
+GO
+
+CREATE PROC SP_EliminarProducto (
+    @IdProducto INT,
+    @Respuesta BIT OUTPUT,
+    @Mensaje VARCHAR(500) OUTPUT
 )
-as
-begin
-	set @Respuesta = 0
-	set @Mensaje = ''
-	declare @pasoreglas bit = 1
+AS
+BEGIN
+    SET @Respuesta = 0
+    SET @Mensaje = ''
+    DECLARE @pasoReglas BIT = 1
 
-	IF EXISTS (SELECT * FROM DETALLE_VENTA dv
-	INNER JOIN PRODUCTO p ON p.IdProducto = dv.IdProducto
-	WHERE p.IdProducto = @IdProducto
-	)
-	BEGIN
-		set @pasoreglas = 0
-		set @Respuesta = 0
-		set @Mensaje = @Mensaje + 'No se puede eliminar porque se encuentra relacionado a una VENTA\n' 
-	END
+    IF EXISTS (SELECT * FROM DETALLE_VENTA dv
+               INNER JOIN PRODUCTO p ON p.IdProducto = dv.IdProducto
+               WHERE p.IdProducto = @IdProducto)
+    BEGIN
+        SET @pasoReglas = 0
+        SET @Mensaje = 'No se puede eliminar porque se encuentra relacionado a una VENTA.'
+    END
 
-	if(@pasoreglas = 1)
-	begin
-		delete from PRODUCTO where IdProducto = @IdProducto
-		set @Respuesta = 1 
-	end
+    IF @pasoReglas = 1
+    BEGIN
+        DELETE FROM PRODUCTO WHERE IdProducto = @IdProducto
+        SET @Respuesta = 1
+        SET @Mensaje = 'Producto eliminado con éxito.'
+    END
+END
 
-end
-go
+GO
 
 /* ---------- PROCEDIMIENTOS PARA CLIENTE -----------------*/
 
-create PROC sp_RegistrarCliente(
-@Documento varchar(50),
-@NombreCompleto varchar(50),
-@Correo varchar(50),
-@Telefono varchar(50),
-@Estado bit,
-@Resultado int output,
-@Mensaje varchar(500) output
-)as
-begin
-	SET @Resultado = 0
-	DECLARE @IDPERSONA INT 
-	IF NOT EXISTS (SELECT * FROM CLIENTE WHERE Documento = @Documento)
-	begin
-		insert into CLIENTE(Documento,NombreCompleto,Correo,Telefono,Estado) values (
-		@Documento,@NombreCompleto,@Correo,@Telefono,@Estado)
+CREATE PROC SP_RegistrarCliente (
+    @Documento VARCHAR(50),
+    @NombreCompleto VARCHAR(50),
+    @Correo VARCHAR(50),
+    @Telefono VARCHAR(50),
+    @Estado BIT,
+    @Resultado INT OUTPUT,
+    @Mensaje VARCHAR(500) OUTPUT
+)
+AS
+BEGIN
+    SET @Resultado = 0
 
-		set @Resultado = SCOPE_IDENTITY()
-	end
-	else
-		set @Mensaje = 'El numero de documento ya existe'
-end
+    IF NOT EXISTS (SELECT * FROM CLIENTE WHERE Documento = @Documento)
+    BEGIN
+        INSERT INTO CLIENTE (Documento, NombreCompleto, Correo, Telefono, Estado)
+        VALUES (@Documento, @NombreCompleto, @Correo, @Telefono, @Estado)
 
-go
+        SET @Resultado = SCOPE_IDENTITY()
+        SET @Mensaje = 'Cliente registrado con éxito.'
+    END
+    ELSE
+    BEGIN
+        SET @Mensaje = 'El número de documento ya existe.'
+    END
+END
 
-create PROC sp_ModificarCliente(
-@IdCliente int,
-@Documento varchar(50),
-@NombreCompleto varchar(50),
-@Correo varchar(50),
-@Telefono varchar(50),
-@Estado bit,
-@Resultado bit output,
-@Mensaje varchar(500) output
-)as
-begin
-	SET @Resultado = 1
-	DECLARE @IDPERSONA INT 
-	IF NOT EXISTS (SELECT * FROM CLIENTE WHERE Documento = @Documento and IdCliente != @IdCliente)
-	begin
-		update CLIENTE set
-		Documento = @Documento,
-		NombreCompleto = @NombreCompleto,
-		Correo = @Correo,
-		Telefono = @Telefono,
-		Estado = @Estado
-		where IdCliente = @IdCliente
-	end
-	else
-	begin
-		SET @Resultado = 0
-		set @Mensaje = 'El numero de documento ya existe'
-	end
-end
+GO
+
+CREATE PROC SP_ModificarCliente (
+    @IdCliente INT,
+    @Documento VARCHAR(50),
+    @NombreCompleto VARCHAR(50),
+    @Correo VARCHAR(50),
+    @Telefono VARCHAR(50),
+    @Estado BIT,
+    @Resultado BIT OUTPUT,
+    @Mensaje VARCHAR(500) OUTPUT
+)
+AS
+BEGIN
+    SET @Resultado = 1
+
+    IF NOT EXISTS (SELECT * FROM CLIENTE WHERE Documento = @Documento AND IdCliente != @IdCliente)
+    BEGIN
+        UPDATE CLIENTE SET
+            Documento = @Documento,
+            NombreCompleto = @NombreCompleto,
+            Correo = @Correo,
+            Telefono = @Telefono,
+            Estado = @Estado
+        WHERE IdCliente = @IdCliente
+
+        SET @Mensaje = 'Cliente modificado con éxito.'
+    END
+    ELSE
+    BEGIN
+        SET @Resultado = 0
+        SET @Mensaje = 'El número de documento ya existe.'
+    END
+END
+
+GO
 
 /****************** INSERTAMOS REGISTROS A LAS TABLAS ******************/
 /*---------------------------------------------------------------------*/
 
+INSERT INTO ROL (Descripcion)
+VALUES ('ADMINISTRADOR');
+
 GO
 
- insert into rol (Descripcion)
- values('ADMINISTRADOR')
+INSERT INTO ROL (Descripcion)
+VALUES ('EMPLEADO');
 
- GO
+GO
 
-  insert into rol (Descripcion)
- values('EMPLEADO')
+INSERT INTO USUARIO (Documento, NombreCompleto, Correo, Clave, IdRol, Estado)
+VALUES
+    ('01', 'ADMIN', '@GMAIL.COM', '123', 1, 1);
 
- GO
+GO
 
- insert into USUARIO(Documento,NombreCompleto,Correo,Clave,IdRol,Estado)
- values 
- ('01','ADMIN','@GMAIL.COM','123',1,1)
+INSERT INTO USUARIO (Documento, NombreCompleto, Correo, Clave, IdRol, Estado)
+VALUES
+    ('00', 'EMPLEADO', '@GMAIL.COM', '456', 2, 1);
 
- GO
+GO
 
+INSERT INTO PERMISO (IdRol, NombreMenu) VALUES
+    (1, 'menu_ventas'),
+    (1, 'menu_detalle_ventas'),
+    (1, 'menu_agenda'),
+    (1, 'menu_productos'),
+    (1, 'menu_clientes'),
+    (1, 'menu_usuarios'),
+    (1, 'Menu_Acercade');
 
- insert into USUARIO(Documento,NombreCompleto,Correo,Clave,IdRol,Estado)
- values 
- ('00','EMPLEADO','@GMAIL.COM','456',2,1)
+GO
 
- GO
+INSERT INTO PERMISO (IdRol, NombreMenu) VALUES
+    (2, 'menu_ventas'),
+    (2, 'menu_detalle_ventas'),
+    (2, 'menu_agenda'),
+    (2, 'menu_productos'),
+    (2, 'Menu_Acercade');
 
-  insert into PERMISO(IdRol,NombreMenu) values
-  (1,'menu_ventas'),
-  (1,'menu_detalle_ventas'),
-  (1,'menu_agenda'),
-  (1,'menu_productos'),
-  (1,'menu_clientes'),
-  (1,'menu_usuarios'),
-  (1,'Menu_Acercade')
+GO
 
-  GO
-
-  insert into PERMISO(IdRol,NombreMenu) values
-  (2,'menu_ventas'),
-  (2,'menu_detalle_ventas'),
-  (2,'menu_agenda'),
-  (2,'menu_productos'),
-  (2,'Menu_Acercade')
-
-  GO
-
-  insert into Evento(IdEvento,DatosCliente,Telefono,Direccion,DescripcionEvento,ValorVenta,ValorPagado,ValorResta) values
-  ('Sujeto Prueba','300000','av35. codigo estudiante 123','prueba','250000','250000','0',1)
+INSERT INTO EVENTO (DatosCliente, Telefono, Direccion, DescripcionEvento, ValorVenta, ValorPagado, ValorResta, Estado) 
+VALUES 
+    ('Sujeto Prueba', '300000', 'av35. codigo estudiante 123', 'prueba', 250000, 250000, 0, 1);
