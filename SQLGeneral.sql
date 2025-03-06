@@ -1,6 +1,5 @@
 CREATE DATABASE DBFOTO_CORREA
-
-
+    
 USE DBFOTO_CORREA
 
 GO
@@ -43,6 +42,8 @@ CREATE TABLE CLIENTE (
     NombreCompleto VARCHAR(50),
     Correo VARCHAR(50),
     Telefono VARCHAR(50),
+	TipoCompra VARCHAR (50),
+	EstadoDeuda VARCHAR (50),
     Estado BIT,
     FechaRegistro DATETIME DEFAULT GETDATE()
 );
@@ -51,7 +52,7 @@ GO
 
 CREATE TABLE CATEGORIA (
     IdCategoria INT PRIMARY KEY IDENTITY,
-    Descripcion VARCHAR(100),
+    Detalle VARCHAR(100),
     Estado BIT,
     FechaRegistro DATETIME DEFAULT GETDATE()
 );
@@ -60,9 +61,9 @@ GO
 
 CREATE TABLE PRODUCTO (
     IdProducto INT PRIMARY KEY IDENTITY,
-    Codigo VARCHAR(50),
-    Descripcion VARCHAR(50),
-    IdCategoria INT REFERENCES CATEGORIA(IdCategoria),
+	IdCategoria INT REFERENCES CATEGORIA(IdCategoria),
+    CodProducto VARCHAR(50),
+    DetalleProducto VARCHAR(50),
     PrecioVenta DECIMAL(10,2) DEFAULT 0,
     Estado BIT,
     FechaRegistro DATETIME DEFAULT GETDATE()
@@ -72,7 +73,7 @@ GO
 
 CREATE TABLE PRODUCTO_DETAL (
     IdProducto INT PRIMARY KEY IDENTITY,
-    Descripcion VARCHAR(50),
+    Producto VARCHAR(50),
     PrecioVenta DECIMAL(10,2) DEFAULT 0,
     Estado BIT
 );
@@ -114,6 +115,7 @@ CREATE TABLE DETALLE_VENTA (
     IdDetalleVenta INT PRIMARY KEY IDENTITY,
     IdVenta INT REFERENCES VENTA(IdVenta),
     IdProducto INT REFERENCES PRODUCTO(IdProducto),
+	DatosCliente VARCHAR(50),
     Telefono VARCHAR(50),
     Especificaciones VARCHAR(50),
     Cantidad INT,
@@ -121,6 +123,7 @@ CREATE TABLE DETALLE_VENTA (
     ValorPagado DECIMAL(10,2),
     ValorResta DECIMAL(10,2),
     SubTotal DECIMAL(10,2),
+	EstadoDeuda VARCHAR(50),
     FechaRegistro DATETIME DEFAULT GETDATE()
 );
 
@@ -139,6 +142,7 @@ GO
 
 CREATE TABLE EVENTO (
     IdEvento INT PRIMARY KEY IDENTITY,
+	FechaEvento VARCHAR(60),
     DatosCliente VARCHAR(60),
     Telefono VARCHAR(60),
     Direccion VARCHAR(60),
@@ -146,7 +150,8 @@ CREATE TABLE EVENTO (
     ValorVenta DECIMAL(10,2),
     ValorPagado DECIMAL(10,2),
     ValorResta DECIMAL(10,2),
-    Estado BIT
+    Estado BIT,
+	FechaRegistro DATETIME DEFAULT GETDATE()
 );
 GO
 
@@ -259,9 +264,9 @@ AS
 BEGIN
     SET @Resultado = 0
 
-    IF NOT EXISTS (SELECT * FROM CATEGORIA WHERE Descripcion = @Descripcion)
+    IF NOT EXISTS (SELECT * FROM CATEGORIA WHERE Detalle = @Descripcion)
     BEGIN
-        INSERT INTO CATEGORIA (Descripcion, Estado) VALUES (@Descripcion, @Estado)
+        INSERT INTO CATEGORIA (Detalle, Estado) VALUES (@Descripcion, @Estado)
         SET @Resultado = SCOPE_IDENTITY()
         SET @Mensaje = 'Categoría registrada con éxito.'
     END
@@ -284,10 +289,10 @@ AS
 BEGIN
     SET @Resultado = 1
 
-    IF NOT EXISTS (SELECT * FROM CATEGORIA WHERE Descripcion = @Descripcion AND IdCategoria != @IdCategoria)
+    IF NOT EXISTS (SELECT * FROM CATEGORIA WHERE Detalle = @Descripcion AND IdCategoria != @IdCategoria)
     BEGIN
         UPDATE CATEGORIA SET
-            Descripcion = @Descripcion,
+            Detalle = @Descripcion,
             Estado = @Estado
         WHERE IdCategoria = @IdCategoria
 
@@ -333,8 +338,8 @@ GO
 
 CREATE PROC SP_RegistrarProducto (
     @IdCategoria INT,
-    @Codigo VARCHAR(20),
-    @Descripcion VARCHAR(30),
+    @CodProducto VARCHAR(20),
+    @DetalleProducto VARCHAR(30),
     @PrecioVenta DECIMAL(10,2),
     @Estado BIT,
     @Resultado INT OUTPUT,
@@ -344,10 +349,10 @@ AS
 BEGIN
     SET @Resultado = 0
 
-    IF NOT EXISTS (SELECT * FROM PRODUCTO WHERE Codigo = @Codigo)
+    IF NOT EXISTS (SELECT * FROM PRODUCTO WHERE CodProducto = @CodProducto)
     BEGIN
-        INSERT INTO PRODUCTO (IdCategoria, Codigo, Descripcion, PrecioVenta, Estado)
-        VALUES (@IdCategoria, @Codigo, @Descripcion, @PrecioVenta, @Estado)
+        INSERT INTO PRODUCTO (IdCategoria, CodProducto, DetalleProducto, PrecioVenta, Estado)
+        VALUES (@IdCategoria, @CodProducto, @DetalleProducto, @PrecioVenta, @Estado)
 
         SET @Resultado = SCOPE_IDENTITY()
         SET @Mensaje = 'Producto registrado con éxito.'
@@ -362,8 +367,8 @@ GO
 
 CREATE PROC SP_ModificarProducto (
     @IdProducto INT,
-    @Codigo VARCHAR(20),
-    @Descripcion VARCHAR(30),
+    @CodProducto VARCHAR(20),
+    @DetalleProducto VARCHAR(30),
     @IdCategoria INT,
     @Estado BIT,
     @Resultado BIT OUTPUT,
@@ -373,11 +378,11 @@ AS
 BEGIN
     SET @Resultado = 1
 
-    IF NOT EXISTS (SELECT * FROM PRODUCTO WHERE Codigo = @Codigo AND IdProducto != @IdProducto)
+    IF NOT EXISTS (SELECT * FROM PRODUCTO WHERE CodProducto = @CodProducto AND IdProducto != @IdProducto)
     BEGIN
         UPDATE PRODUCTO SET
-            Codigo = @Codigo,
-            Descripcion = @Descripcion,
+            CodProducto = @CodProducto,
+            DetalleProducto = @DetalleProducto,
             IdCategoria = @IdCategoria,
             Estado = @Estado
         WHERE IdProducto = @IdProducto
@@ -535,4 +540,4 @@ GO
 
 INSERT INTO EVENTO (DatosCliente, Telefono, Direccion, DescripcionEvento, ValorVenta, ValorPagado, ValorResta, Estado) 
 VALUES 
-    ('Sujeto Prueba', '300000', 'av35. codigo estudiante 123', 'prueba', 250000, 250000, 0, 1);
+    ('Sujeto Prueba', '300000', 'av35. CodProducto estudiante 123', 'prueba', 250000, 250000, 0, 1);
